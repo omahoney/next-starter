@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import { Storage } from "thirdweb";
+import { upload } from "thirdweb/storage";
 import { client } from "../client";
 
 export default function Evidence() {
@@ -49,13 +49,14 @@ export default function Evidence() {
       setIsUploading(true);
       setUploadError(null);
       
-      // Create storage instance
-      const storage = new Storage({
-        clientId: client.clientId,
+      // Upload file to IPFS
+      const uris = await upload({
+        client,
+        files: [file]
       });
       
-      // Upload file to IPFS using thirdweb storage
-      const uri = await storage.upload(file);
+      // Get the first URI
+      const uri = uris[0];
       
       setIpfsUri(uri);
       
